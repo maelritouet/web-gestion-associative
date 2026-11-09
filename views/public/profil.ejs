@@ -1,0 +1,17 @@
+<%- include('../partials/head') %>
+<section class="carte-formulaire">
+  <h1>Mon profil</h1>
+  <p>Rôle : <strong><%= { etudiant: 'Étudiant(e)', responsable: 'Responsable associatif', admin: 'Administrateur' }[utilisateur.role] %></strong><% if (utilisateur.association) { %>, <%= utilisateur.association.nom %><% } %></p>
+  <% if (erreurs.general) { %><p class="flash flash--erreur" role="alert"><%= erreurs.general %></p><% } %>
+  <form method="post" action="/profil" novalidate>
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <div class="rangee">
+      <%- include('../partials/champ', { nom: 'prenom', libelle: 'Prénom', valeur: valeurs.prenom, erreur: erreurs.prenom, requis: true }) %>
+      <%- include('../partials/champ', { nom: 'nom', libelle: 'Nom', valeur: valeurs.nom, erreur: erreurs.nom, requis: true }) %>
+    </div>
+    <%- include('../partials/champ', { nom: 'email', libelle: 'Email', type: 'email', valeur: valeurs.email, erreur: erreurs.email, requis: true }) %>
+    <%- include('../partials/champ', { nom: 'motDePasse', libelle: 'Nouveau mot de passe', type: 'password', erreur: erreurs.motDePasse, aide: 'Laissez vide pour garder le mot de passe actuel.', attrs: 'autocomplete="new-password"' }) %>
+    <button class="bouton" type="submit">Enregistrer</button>
+  </form>
+</section>
+<%- include('../partials/foot') %>

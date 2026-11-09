@@ -1,0 +1,7 @@
+<% if (locals.flash && flash.length) { %>
+  <div class="flashs" role="status">
+    <% flash.forEach(function (f) { %>
+      <p class="flash flash--<%= f.type %>"><%= f.message %></p>
+    <% }) %>
+  </div>
+<% } %>

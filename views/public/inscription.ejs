@@ -1,0 +1,18 @@
+<%- include('../partials/head') %>
+<section class="carte-formulaire">
+  <h1>Créer un compte</h1>
+  <p>Un compte vous permet de réserver votre place aux événements et de retrouver vos inscriptions.</p>
+  <% if (erreurs.general) { %><p class="flash flash--erreur" role="alert"><%= erreurs.general %></p><% } %>
+  <form method="post" action="/inscription" novalidate>
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <div class="rangee">
+      <%- include('../partials/champ', { nom: 'prenom', libelle: 'Prénom', valeur: valeurs.prenom, erreur: erreurs.prenom, requis: true, attrs: 'autocomplete="given-name"' }) %>
+      <%- include('../partials/champ', { nom: 'nom', libelle: 'Nom', valeur: valeurs.nom, erreur: erreurs.nom, requis: true, attrs: 'autocomplete="family-name"' }) %>
+    </div>
+    <%- include('../partials/champ', { nom: 'email', libelle: 'Email', type: 'email', valeur: valeurs.email, erreur: erreurs.email, requis: true, attrs: 'autocomplete="email"' }) %>
+    <%- include('../partials/champ', { nom: 'motDePasse', libelle: 'Mot de passe', type: 'password', erreur: erreurs.motDePasse, requis: true, aide: '8 caractères minimum, avec au moins une lettre et un chiffre.', attrs: 'autocomplete="new-password" minlength="8"' }) %>
+    <button class="bouton bouton--plein" type="submit">Créer mon compte</button>
+  </form>
+  <p class="carte-formulaire__bas">Déjà inscrit(e) ? <a href="/connexion">Se connecter</a></p>
+</section>
+<%- include('../partials/foot') %>

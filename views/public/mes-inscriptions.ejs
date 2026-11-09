@@ -1,0 +1,43 @@
+<%- include('../partials/head') %>
+<div class="titre-page"><h1>Mes inscriptions</h1></div>
+
+<% function ligne(i, annulable) { const e = i.evenement; %>
+  <li class="inscription">
+    <div>
+      <h3><a href="/evenements/<%= e._id %>"><%= e.titre %></a></h3>
+      <p><time datetime="<%= new Date(e.date).toISOString() %>"><%= formaterDate(e.date) %></time>, <%= e.lieu %><% if (e.association) { %> (<%= e.association.nom %>)<% } %></p>
+    </div>
+    <% if (annulable) { %>
+      <form method="post" action="/mes-inscriptions/<%= i._id %>/annuler" data-confirmer="Annuler votre inscription à « <%= e.titre %> » ?">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <button class="bouton bouton--secondaire bouton--petit" type="submit">Annuler</button>
+      </form>
+    <% } else if (i.statut === 'annulee') { %>
+      <a class="bouton bouton--petit bouton--secondaire" href="/evenements/<%= e._id %>">Se réinscrire</a>
+    <% } %>
+  </li>
+<% } %>
+
+<section class="section">
+  <h2>À venir</h2>
+  <% if (aVenir.length) { %>
+    <ul class="liste-inscriptions"><% aVenir.forEach(function (i) { ligne(i, true) }) %></ul>
+  <% } else { %>
+    <div class="vide"><p>Vous n’êtes inscrit(e) à aucun événement à venir.</p><p><a class="bouton" href="/evenements">Parcourir les événements</a></p></div>
+  <% } %>
+</section>
+
+<% if (passees.length) { %>
+<section class="section">
+  <h2>Passées</h2>
+  <ul class="liste-inscriptions liste-inscriptions--attenuee"><% passees.forEach(function (i) { ligne(i, false) }) %></ul>
+</section>
+<% } %>
+
+<% if (annulees.length) { %>
+<section class="section">
+  <h2>Annulées</h2>
+  <ul class="liste-inscriptions liste-inscriptions--attenuee"><% annulees.forEach(function (i) { ligne(i, false) }) %></ul>
+</section>
+<% } %>
+<%- include('../partials/foot') %>

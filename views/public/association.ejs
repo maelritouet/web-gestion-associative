@@ -1,0 +1,30 @@
+<%- include('../partials/head') %>
+<p class="fil"><a href="/associations">Associations</a> / <%= association.nom %></p>
+<section class="fiche-association">
+  <% if (association.logo) { %>
+    <img class="fiche-association__logo" src="<%= association.logo %>" alt="Logo de <%= association.nom %>" width="120" height="120">
+  <% } else { %>
+    <span class="fiche-association__logo association__logo--initiale" aria-hidden="true"><%= association.nom.charAt(0) %></span>
+  <% } %>
+  <div>
+    <h1><%= association.nom %></h1>
+    <p class="fiche-association__description"><%= association.description %></p>
+    <ul class="contact">
+      <li><a href="mailto:<%= association.contact.email %>"><%= association.contact.email %></a></li>
+      <% if (association.contact.telephone) { %><li><%= association.contact.telephone %></li><% } %>
+      <% if (association.contact.siteWeb) { %><li><a href="<%= association.contact.siteWeb %>" rel="noopener noreferrer" target="_blank"><%= association.contact.siteWeb.replace(/^https?:\/\//, '') %></a></li><% } %>
+    </ul>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section__entete"><h2>Événements à venir</h2></div>
+  <% if (evenements.length) { %>
+    <div class="grille-tickets">
+      <% evenements.forEach(function (e) { %><%- include('../partials/ticket', { e }) %><% }) %>
+    </div>
+  <% } else { %>
+    <p class="vide">Pas d’événement programmé par cette association pour l’instant.</p>
+  <% } %>
+</section>
+<%- include('../partials/foot') %>

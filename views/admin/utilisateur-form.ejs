@@ -1,0 +1,40 @@
+<%- include('../partials/admin-head') %>
+<% const libellesRoles = { etudiant: 'Étudiant', responsable: 'Responsable associatif', admin: 'Administrateur' }; %>
+<p class="fil"><a href="/admin/utilisateurs">Utilisateurs</a> / <%= cible ? 'Modifier' : 'Nouveau' %></p>
+<h1><%= titre %></h1>
+<% if (erreurs.general) { %><p class="flash flash--erreur" role="alert"><%= erreurs.general %></p><% } %>
+
+<form class="formulaire" method="post" action="<%= cible ? '/admin/utilisateurs/' + cible._id : '/admin/utilisateurs' %>" novalidate>
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+  <div class="rangee">
+    <%- include('../partials/champ', { nom: 'prenom', libelle: 'Prénom', valeur: valeurs.prenom, erreur: erreurs.prenom, requis: true }) %>
+    <%- include('../partials/champ', { nom: 'nom', libelle: 'Nom', valeur: valeurs.nom, erreur: erreurs.nom, requis: true }) %>
+  </div>
+  <%- include('../partials/champ', { nom: 'email', libelle: 'Email', type: 'email', valeur: valeurs.email, erreur: erreurs.email, requis: true }) %>
+  <%- include('../partials/champ', { nom: 'motDePasse', libelle: cible ? 'Nouveau mot de passe' : 'Mot de passe', type: 'password', erreur: erreurs.motDePasse, requis: !cible, aide: cible ? 'Laissez vide pour ne pas le changer.' : '8 caractères minimum.', attrs: 'autocomplete="new-password"' }) %>
+
+  <div class="rangee">
+    <div class="champ <%= erreurs.role ? 'champ--erreur' : '' %>">
+      <label for="champ-role">Rôle</label>
+      <select id="champ-role" name="role" data-role-select>
+        <% roles.forEach(function (r) { %><option value="<%= r %>" <%= valeurs.role === r ? 'selected' : '' %>><%= libellesRoles[r] %></option><% }) %>
+      </select>
+      <% if (erreurs.role) { %><p class="champ__erreur"><%= erreurs.role %></p><% } %>
+    </div>
+    <div class="champ <%= erreurs.association ? 'champ--erreur' : '' %>" data-champ-association>
+      <label for="champ-association">Association gérée</label>
+      <select id="champ-association" name="association">
+        <option value="">Aucune</option>
+        <% associations.forEach(function (a) { %><option value="<%= a._id %>" <%= String(valeurs.association) === String(a._id) ? 'selected' : '' %>><%= a.nom %></option><% }) %>
+      </select>
+      <p class="champ__aide">Obligatoire pour un responsable associatif.</p>
+      <% if (erreurs.association) { %><p class="champ__erreur"><%= erreurs.association %></p><% } %>
+    </div>
+  </div>
+
+  <div class="formulaire__actions">
+    <button class="bouton" type="submit"><%= cible ? 'Enregistrer les modifications' : 'Créer le compte' %></button>
+    <a href="/admin/utilisateurs">Annuler</a>
+  </div>
+</form>
+<%- include('../partials/admin-foot') %>

@@ -1,0 +1,48 @@
+<%- include('../partials/admin-head') %>
+<% const libellesRoles = { etudiant: 'Étudiant', responsable: 'Responsable', admin: 'Admin' }; %>
+<div class="admin__entete">
+  <h1>Utilisateurs</h1>
+  <a class="bouton" href="/admin/utilisateurs/nouveau">Créer un compte</a>
+</div>
+
+<form class="filtres filtres--compact" method="get" action="/admin/utilisateurs" role="search">
+  <div class="champ filtres__recherche">
+    <label for="q">Nom ou email</label>
+    <input id="q" name="q" type="search" value="<%= filtres.q || '' %>">
+  </div>
+  <div class="champ">
+    <label for="role">Rôle</label>
+    <select id="role" name="role">
+      <option value="">Tous</option>
+      <% roles.forEach(function (r) { %><option value="<%= r %>" <%= filtres.role === r ? 'selected' : '' %>><%= libellesRoles[r] %></option><% }) %>
+    </select>
+  </div>
+  <div class="filtres__actions"><button class="bouton bouton--secondaire" type="submit">Filtrer</button></div>
+</form>
+
+<% if (utilisateurs.length) { %>
+<table class="tableau">
+  <thead><tr><th>Nom</th><th>Email</th><th>Rôle</th><th>Actions</th></tr></thead>
+  <tbody>
+  <% utilisateurs.forEach(function (u) { %>
+    <tr>
+      <td><strong><%= u.prenom %> <%= u.nom %></strong></td>
+      <td><%= u.email %></td>
+      <td><span class="pastille pastille--<%= u.role %>"><%= libellesRoles[u.role] %></span><% if (u.association) { %> <small><%= u.association.nom %></small><% } %></td>
+      <td class="tableau__actions">
+        <a href="/admin/utilisateurs/<%= u._id %>/modifier">Modifier</a>
+        <% if (String(u._id) !== String(utilisateur._id)) { %>
+        <form method="post" action="/admin/utilisateurs/<%= u._id %>/supprimer" data-confirmer="Supprimer le compte de <%= u.prenom %> <%= u.nom %> et toutes ses inscriptions ?">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <button class="lien-bouton lien-bouton--danger" type="submit">Supprimer</button>
+        </form>
+        <% } %>
+      </td>
+    </tr>
+  <% }) %>
+  </tbody>
+</table>
+<% } else { %>
+  <p class="vide">Aucun compte ne correspond à cette recherche.</p>
+<% } %>
+<%- include('../partials/admin-foot') %>

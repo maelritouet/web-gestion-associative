@@ -1,0 +1,30 @@
+<%- include('../partials/head') %>
+<div class="titre-page">
+  <h1>Associations</h1>
+  <form method="get" action="/associations" class="recherche-simple" role="search">
+    <label for="q" class="visuellement-cache">Rechercher une association</label>
+    <input id="q" type="search" name="q" value="<%= q %>" placeholder="Nom de l’association">
+    <button class="bouton bouton--secondaire" type="submit">Rechercher</button>
+  </form>
+</div>
+
+<% if (associations.length) { %>
+  <ul class="liste-associations">
+    <% associations.forEach(function (a) { %>
+      <li class="association">
+        <% if (a.logo) { %>
+          <img class="association__logo" src="<%= a.logo %>" alt="" width="64" height="64">
+        <% } else { %>
+          <span class="association__logo association__logo--initiale" aria-hidden="true"><%= a.nom.charAt(0) %></span>
+        <% } %>
+        <div>
+          <h2 class="association__nom"><a href="/associations/<%= a._id %>"><%= a.nom %></a></h2>
+          <p class="association__resume"><%= a.description.length > 160 ? a.description.slice(0, 157) + '…' : a.description %></p>
+        </div>
+      </li>
+    <% }) %>
+  </ul>
+<% } else { %>
+  <p class="vide"><%= q ? 'Aucune association ne porte ce nom.' : 'Aucune association active pour le moment.' %></p>
+<% } %>
+<%- include('../partials/foot') %>

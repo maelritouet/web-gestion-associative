@@ -1,0 +1,46 @@
+<%- include('../partials/admin-head') %>
+<% const confirmees = inscriptions.filter(function (i) { return i.statut === 'confirmee' }); %>
+<p class="fil"><a href="/admin/evenements">Événements</a> / Inscrits</p>
+<div class="admin__entete">
+  <div>
+    <h1><%= evenement.titre %></h1>
+    <p><%= formaterDate(evenement.date) %>, <%= evenement.lieu %> — <%= evenement.association.nom %></p>
+  </div>
+  <a class="bouton bouton--secondaire" href="/admin/evenements/<%= evenement._id %>/inscrits.csv">Exporter en CSV</a>
+</div>
+
+<dl class="chiffres">
+  <div><dt>Confirmées</dt><dd><%= confirmees.length %></dd></div>
+  <div><dt>Capacité</dt><dd><%= evenement.capacite %></dd></div>
+  <div><dt>Places libres</dt><dd><%= Math.max(0, evenement.capacite - evenement.nbInscrits) %></dd></div>
+  <div><dt>Annulations</dt><dd><%= inscriptions.length - confirmees.length %></dd></div>
+</dl>
+
+<% if (inscriptions.length) { %>
+<table class="tableau">
+  <thead><tr><th>Participant</th><th>Email</th><th>Inscrit le</th><th>Statut</th><th>Actions</th></tr></thead>
+  <tbody>
+  <% inscriptions.forEach(function (i) { const u = i.utilisateur; %>
+    <tr class="<%= i.statut === 'annulee' ? 'tableau__ligne--attenuee' : '' %>">
+      <td><%= u ? u.prenom + ' ' + u.nom : 'Compte supprimé' %></td>
+      <td><% if (u) { %><a href="mailto:<%= u.email %>"><%= u.email %></a><% } %></td>
+      <td><%= formaterDate(i.dateInscription) %></td>
+      <td><span class="pastille pastille--<%= i.statut %>"><%= i.statut === 'confirmee' ? 'Confirmée' : 'Annulée' %></span></td>
+      <td class="tableau__actions">
+        <form method="post" action="/admin/inscriptions/<%= i._id %>/<%= i.statut === 'confirmee' ? 'annuler' : 'reactiver' %>">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <button class="lien-bouton" type="submit"><%= i.statut === 'confirmee' ? 'Annuler' : 'Réactiver' %></button>
+        </form>
+        <form method="post" action="/admin/inscriptions/<%= i._id %>/supprimer" data-confirmer="Supprimer définitivement cette inscription ?">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <button class="lien-bouton lien-bouton--danger" type="submit">Supprimer</button>
+        </form>
+      </td>
+    </tr>
+  <% }) %>
+  </tbody>
+</table>
+<% } else { %>
+  <p class="vide">Personne n’est encore inscrit à cet événement.</p>
+<% } %>
+<%- include('../partials/admin-foot') %>

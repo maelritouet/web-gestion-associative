@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= locals.titre ? titre + ' – ' : '' %>Vie associative ISEN</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <script src="/js/app.js" defer></script>
+</head>
+<body class="<%= locals.classeBody || 'site' %>">
+<a class="lien-evitement" href="#contenu">Aller au contenu</a>
+<% if (!locals.classeBody) { %>
+<header class="entete">
+  <div class="entete__interieur">
+    <a class="marque" href="/">
+      <svg class="marque__logo" viewBox="0 0 32 32" aria-hidden="true"><rect x="2" y="7" width="28" height="18" rx="3"/><circle cx="11" cy="7" r="3" class="marque__trou"/><circle cx="11" cy="25" r="3" class="marque__trou"/></svg>
+      <span>Vie asso</span>
+    </a>
+    <nav class="nav" aria-label="Navigation principale">
+      <a href="/evenements" class="<%= cheminCourant.startsWith('/evenements') ? 'actif' : '' %>">Événements</a>
+      <a href="/associations" class="<%= cheminCourant.startsWith('/associations') ? 'actif' : '' %>">Associations</a>
+      <% if (utilisateur) { %>
+        <a href="/mes-inscriptions" class="<%= cheminCourant === '/mes-inscriptions' ? 'actif' : '' %>">Mes inscriptions</a>
+        <% if (accedeAuBackOffice) { %><a href="/admin">Back-office</a><% } %>
+        <a href="/profil" class="nav__compte <%= cheminCourant === '/profil' ? 'actif' : '' %>"><%= utilisateur.prenom %></a>
+        <form method="post" action="/deconnexion" class="nav__form">
+          <input type="hidden" name="_csrf" value="<%= locals.csrfToken %>">
+          <button type="submit" class="lien-bouton">Se déconnecter</button>
+        </form>
+      <% } else { %>
+        <a href="/connexion">Se connecter</a>
+        <a href="/inscription" class="bouton bouton--petit">Créer un compte</a>
+      <% } %>
+    </nav>
+  </div>
+</header>
+<main id="contenu" class="page">
+  <%- include('flash') %>
+<% } %>

@@ -1,0 +1,27 @@
+<%- include('head', { classeBody: 'admin' }) %>
+<div class="admin__cadre">
+  <aside class="admin__barre">
+    <a class="marque marque--admin" href="/admin">
+      <svg class="marque__logo" viewBox="0 0 32 32" aria-hidden="true"><rect x="2" y="7" width="28" height="18" rx="3"/><circle cx="11" cy="7" r="3" class="marque__trou"/><circle cx="11" cy="25" r="3" class="marque__trou"/></svg>
+      <span>Back-office</span>
+    </a>
+    <p class="admin__qui">
+      <%= utilisateur.prenom %> <%= utilisateur.nom %><br>
+      <small><%= utilisateur.role === 'admin' ? 'Administrateur' : 'Responsable de ' + (utilisateur.association ? utilisateur.association.nom : '—') %></small>
+    </p>
+    <nav class="admin__nav" aria-label="Back-office">
+      <a href="/admin" class="<%= cheminCourant === '/admin' ? 'actif' : '' %>">Tableau de bord</a>
+      <a href="/admin/evenements" class="<%= cheminCourant.startsWith('/admin/evenements') ? 'actif' : '' %>">Événements</a>
+      <a href="/admin/associations" class="<%= cheminCourant.startsWith('/admin/associations') ? 'actif' : '' %>"><%= estAdmin ? 'Associations' : 'Mon association' %></a>
+      <% if (estAdmin) { %><a href="/admin/utilisateurs" class="<%= cheminCourant.startsWith('/admin/utilisateurs') ? 'actif' : '' %>">Utilisateurs</a><% } %>
+    </nav>
+    <div class="admin__bas">
+      <a href="/">Voir le site public</a>
+      <form method="post" action="/deconnexion">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <button type="submit" class="lien-bouton">Se déconnecter</button>
+      </form>
+    </div>
+  </aside>
+  <main id="contenu" class="admin__contenu">
+    <%- include('flash') %>

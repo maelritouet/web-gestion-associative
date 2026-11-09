@@ -1,0 +1,15 @@
+<%#
+  Champ de formulaire générique avec libellé et message d'erreur.
+  Paramètres : nom, libelle, type (text), valeur, erreur, requis, aide, attrs
+%>
+<% const idChamp = 'champ-' + nom; const t = locals.type || 'text'; %>
+<div class="champ <%= locals.erreur ? 'champ--erreur' : '' %>">
+  <label for="<%= idChamp %>"><%= libelle %><% if (locals.requis) { %> <span class="requis" aria-hidden="true">*</span><% } %></label>
+  <% if (t === 'textarea') { %>
+    <textarea id="<%= idChamp %>" name="<%= nom %>" rows="<%= locals.lignes || 6 %>" <%= locals.requis ? 'required' : '' %> <% if (locals.erreur) { %>aria-invalid="true" aria-describedby="<%= idChamp %>-erreur"<% } %>><%= locals.valeur ?? '' %></textarea>
+  <% } else { %>
+    <input id="<%= idChamp %>" name="<%= nom %>" type="<%= t %>" value="<%= t === 'password' ? '' : (locals.valeur ?? '') %>" <%= locals.requis ? 'required' : '' %> <%- locals.attrs || '' %> <% if (locals.erreur) { %>aria-invalid="true" aria-describedby="<%= idChamp %>-erreur"<% } %>>
+  <% } %>
+  <% if (locals.aide) { %><p class="champ__aide"><%= aide %></p><% } %>
+  <% if (locals.erreur) { %><p class="champ__erreur" id="<%= idChamp %>-erreur"><%= erreur %></p><% } %>
+</div>

@@ -1,0 +1,36 @@
+<%- include('../partials/admin-head') %>
+<div class="admin__entete">
+  <h1>Tableau de bord</h1>
+  <a class="bouton" href="/admin/evenements/nouveau">Créer un événement</a>
+</div>
+
+<dl class="chiffres">
+  <div><dt>Événements</dt><dd><%= stats.nbEvenements %></dd></div>
+  <div><dt>Publiés</dt><dd><%= stats.nbPublies %></dd></div>
+  <div><dt>Inscriptions confirmées</dt><dd><%= stats.nbInscriptions %></dd></div>
+  <% if (stats.nbAssociations !== null) { %><div><dt>Associations</dt><dd><%= stats.nbAssociations %></dd></div><% } %>
+  <% if (stats.nbUtilisateurs !== null) { %><div><dt>Comptes</dt><dd><%= stats.nbUtilisateurs %></dd></div><% } %>
+</dl>
+
+<section class="section">
+  <h2>Prochains événements</h2>
+  <% if (prochains.length) { %>
+  <table class="tableau">
+    <thead><tr><th>Événement</th><th>Date</th><th>Statut</th><th>Remplissage</th><th><span class="visuellement-cache">Actions</span></th></tr></thead>
+    <tbody>
+      <% prochains.forEach(function (e) { const taux = Math.min(100, Math.round(e.nbInscrits / e.capacite * 100)); %>
+      <tr>
+        <td><strong><%= e.titre %></strong><br><small><%= e.association ? e.association.nom : '' %></small></td>
+        <td><%= formaterDate(e.date) %></td>
+        <td><span class="pastille pastille--<%= e.statut %>"><%= e.statut === 'publie' ? 'Publié' : 'Brouillon' %></span></td>
+        <td><div class="jauge"><div class="jauge__barre"><span style="--taux: <%= taux %>%"></span></div><span class="jauge__texte"><%= e.nbInscrits %>/<%= e.capacite %></span></div></td>
+        <td class="tableau__actions"><a href="/admin/evenements/<%= e._id %>/inscrits">Inscrits</a></td>
+      </tr>
+      <% }) %>
+    </tbody>
+  </table>
+  <% } else { %>
+    <p class="vide">Aucun événement à venir. <a href="/admin/evenements/nouveau">Créer le premier</a>.</p>
+  <% } %>
+</section>
+<%- include('../partials/admin-foot') %>

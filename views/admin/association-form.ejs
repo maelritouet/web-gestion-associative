@@ -1,0 +1,48 @@
+<%- include('../partials/admin-head') %>
+<p class="fil"><a href="/admin/associations">Associations</a> / <%= association ? 'Modifier' : 'Nouvelle' %></p>
+<h1><%= titre %></h1>
+<% if (erreurs.general) { %><p class="flash flash--erreur" role="alert"><%= erreurs.general %></p><% } %>
+
+<form class="formulaire" method="post" enctype="multipart/form-data" action="<%= association ? '/admin/associations/' + association._id : '/admin/associations' %>" novalidate>
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+  <%- include('../partials/champ', { nom: 'nom', libelle: 'Nom', valeur: valeurs.nom, erreur: erreurs.nom, requis: true, attrs: 'maxlength="80"' }) %>
+  <%- include('../partials/champ', { nom: 'description', libelle: 'Description', type: 'textarea', valeur: valeurs.description, erreur: erreurs.description, requis: true }) %>
+
+  <fieldset>
+    <legend>Contact</legend>
+    <%- include('../partials/champ', { nom: 'contactEmail', libelle: 'Email', type: 'email', valeur: valeurs.contactEmail, erreur: erreurs['contact.email'], requis: true }) %>
+    <div class="rangee">
+      <%- include('../partials/champ', { nom: 'contactTelephone', libelle: 'Téléphone', type: 'tel', valeur: valeurs.contactTelephone, erreur: erreurs['contact.telephone'] }) %>
+      <%- include('../partials/champ', { nom: 'contactSiteWeb', libelle: 'Site web', type: 'url', valeur: valeurs.contactSiteWeb, erreur: erreurs['contact.siteWeb'], attrs: 'placeholder="https://"' }) %>
+    </div>
+  </fieldset>
+
+  <div class="champ <%= erreurs.logo ? 'champ--erreur' : '' %>">
+    <label for="champ-logo">Logo</label>
+    <% if (valeurs.logo) { %>
+      <div class="apercu-logo">
+        <img src="<%= valeurs.logo %>" alt="Logo actuel" width="72" height="72">
+        <label class="case"><input type="checkbox" name="retirerLogo"> Retirer le logo</label>
+      </div>
+    <% } %>
+    <input id="champ-logo" name="logo" type="file" accept="image/png,image/jpeg,image/webp,image/gif">
+    <p class="champ__aide">PNG, JPEG, WebP ou GIF, 2 Mo maximum.</p>
+    <% if (erreurs.logo) { %><p class="champ__erreur"><%= erreurs.logo %></p><% } %>
+  </div>
+
+  <% if (estAdmin) { %>
+  <div class="champ">
+    <label for="champ-statut">Statut</label>
+    <select id="champ-statut" name="statut">
+      <option value="active" <%= valeurs.statut !== 'inactive' ? 'selected' : '' %>>Active</option>
+      <option value="inactive" <%= valeurs.statut === 'inactive' ? 'selected' : '' %>>Inactive</option>
+    </select>
+  </div>
+  <% } %>
+
+  <div class="formulaire__actions">
+    <button class="bouton" type="submit"><%= association ? 'Enregistrer les modifications' : 'Créer l’association' %></button>
+    <a href="/admin/associations">Annuler</a>
+  </div>
+</form>
+<%- include('../partials/admin-foot') %>

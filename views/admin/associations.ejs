@@ -1,0 +1,40 @@
+<%- include('../partials/admin-head') %>
+<div class="admin__entete">
+  <h1><%= estAdmin ? 'Associations' : 'Mon association' %></h1>
+  <% if (estAdmin) { %><a class="bouton" href="/admin/associations/nouvelle">Créer une association</a><% } %>
+</div>
+
+<% if (associations.length) { %>
+<table class="tableau">
+  <thead><tr><th>Association</th><th>Contact</th><th>Statut</th><th>Actions</th></tr></thead>
+  <tbody>
+  <% associations.forEach(function (a) { %>
+    <tr class="<%= a.statut === 'inactive' ? 'tableau__ligne--attenuee' : '' %>">
+      <td class="tableau__avec-logo">
+        <% if (a.logo) { %><img src="<%= a.logo %>" alt="" width="36" height="36"><% } else { %><span class="association__logo--initiale mini" aria-hidden="true"><%= a.nom.charAt(0) %></span><% } %>
+        <strong><%= a.nom %></strong>
+      </td>
+      <td><%= a.contact.email %></td>
+      <td><span class="pastille pastille--<%= a.statut %>"><%= a.statut === 'active' ? 'Active' : 'Inactive' %></span></td>
+      <td class="tableau__actions">
+        <a href="/admin/associations/<%= a._id %>/modifier">Modifier</a>
+        <% if (estAdmin) { %>
+          <form method="post" action="/admin/associations/<%= a._id %>/statut" <% if (a.statut === 'active') { %>data-confirmer="Désactiver « <%= a.nom %> » ? Ses événements ne seront plus visibles et les inscriptions seront fermées."<% } %>>
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <input type="hidden" name="statut" value="<%= a.statut === 'active' ? 'inactive' : 'active' %>">
+            <button class="lien-bouton" type="submit"><%= a.statut === 'active' ? 'Désactiver' : 'Activer' %></button>
+          </form>
+          <form method="post" action="/admin/associations/<%= a._id %>/supprimer" data-confirmer="Supprimer définitivement « <%= a.nom %> » ?">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <button class="lien-bouton lien-bouton--danger" type="submit">Supprimer</button>
+          </form>
+        <% } %>
+      </td>
+    </tr>
+  <% }) %>
+  </tbody>
+</table>
+<% } else { %>
+  <p class="vide">Aucune association. <% if (estAdmin) { %><a href="/admin/associations/nouvelle">Créer la première</a>.<% } %></p>
+<% } %>
+<%- include('../partials/admin-foot') %>

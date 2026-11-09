@@ -1,0 +1,7 @@
+<% if (pages > 1) { %>
+<nav class="pagination" aria-label="Pages de résultats">
+  <% if (page > 1) { %><a href="<%= lienPage(page - 1) %>" rel="prev">Page précédente</a><% } %>
+  <span>Page <%= page %> sur <%= pages %></span>
+  <% if (page < pages) { %><a href="<%= lienPage(page + 1) %>" rel="next">Page suivante</a><% } %>
+</nav>
+<% } %>

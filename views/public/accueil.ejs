@@ -1,0 +1,29 @@
+<%- include('../partials/head') %>
+<section class="hero">
+  <div class="hero__texte">
+    <h1 class="hero__titre">Ce soir, demain, ce week-end&nbsp;: ça se passe sur le campus.</h1>
+    <p class="hero__intro">
+      Les <%= nbAssociations %> associations de l’école publient ici leurs soirées, tournois, conférences et ateliers.
+      Réservez votre place en un clic, annulez si vous ne pouvez plus venir.
+    </p>
+    <p class="hero__actions">
+      <a class="bouton" href="/evenements">Voir les événements</a>
+      <% if (!utilisateur) { %><a class="bouton bouton--secondaire" href="/inscription">Créer mon compte</a><% } %>
+    </p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section__entete">
+    <h2>Prochainement</h2>
+    <a href="/evenements">Tout l’agenda</a>
+  </div>
+  <% if (prochains.length) { %>
+    <div class="grille-tickets">
+      <% prochains.forEach(function (e) { %><%- include('../partials/ticket', { e }) %><% }) %>
+    </div>
+  <% } else { %>
+    <p class="vide">Aucun événement n’est programmé pour le moment. Revenez bientôt !</p>
+  <% } %>
+</section>
+<%- include('../partials/foot') %>

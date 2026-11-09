@@ -1,0 +1,63 @@
+<%- include('../partials/head') %>
+<div class="titre-page">
+  <h1>Événements</h1>
+  <p><%= total %> événement<%= total > 1 ? 's' : '' %> <%= filtres.quand === 'passes' ? 'passé' + (total > 1 ? 's' : '') : filtres.quand === 'tous' ? 'au total' : 'à venir' %></p>
+</div>
+
+<form class="filtres" method="get" action="/evenements" role="search">
+  <div class="champ filtres__recherche">
+    <label for="q">Rechercher</label>
+    <input id="q" name="q" type="search" value="<%= filtres.q || '' %>" placeholder="Titre, lieu, description…">
+  </div>
+  <div class="champ">
+    <label for="categorie">Catégorie</label>
+    <select id="categorie" name="categorie">
+      <option value="">Toutes</option>
+      <% Object.entries(categories).forEach(function ([cle, libelle]) { %>
+        <option value="<%= cle %>" <%= filtres.categorie === cle ? 'selected' : '' %>><%= libelle %></option>
+      <% }) %>
+    </select>
+  </div>
+  <div class="champ">
+    <label for="association">Association</label>
+    <select id="association" name="association">
+      <option value="">Toutes</option>
+      <% associations.forEach(function (a) { %>
+        <option value="<%= a._id %>" <%= filtres.association === String(a._id) ? 'selected' : '' %>><%= a.nom %></option>
+      <% }) %>
+    </select>
+  </div>
+  <div class="champ">
+    <label for="quand">Période</label>
+    <select id="quand" name="quand">
+      <option value="a-venir" <%= filtres.quand === 'a-venir' ? 'selected' : '' %>>À venir</option>
+      <option value="passes" <%= filtres.quand === 'passes' ? 'selected' : '' %>>Passés</option>
+      <option value="tous" <%= filtres.quand === 'tous' ? 'selected' : '' %>>Tous</option>
+    </select>
+  </div>
+  <div class="champ">
+    <label for="du">Du</label>
+    <input id="du" name="du" type="date" value="<%= filtres.du || '' %>">
+  </div>
+  <div class="champ">
+    <label for="au">Au</label>
+    <input id="au" name="au" type="date" value="<%= filtres.au || '' %>">
+  </div>
+  <div class="filtres__actions">
+    <button class="bouton" type="submit">Filtrer</button>
+    <a href="/evenements">Réinitialiser</a>
+  </div>
+</form>
+
+<% if (evenements.length) { %>
+  <div class="grille-tickets">
+    <% evenements.forEach(function (e) { %><%- include('../partials/ticket', { e }) %><% }) %>
+  </div>
+  <%- include('../partials/pagination') %>
+<% } else { %>
+  <div class="vide">
+    <p>Aucun événement ne correspond à ces critères.</p>
+    <p><a href="/evenements">Effacer les filtres</a></p>
+  </div>
+<% } %>
+<%- include('../partials/foot') %>

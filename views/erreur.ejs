@@ -1,0 +1,8 @@
+<%- include('partials/head') %>
+<section class="vide vide--erreur">
+  <p class="vide__code"><%= status %></p>
+  <h1><%= status === 404 ? 'Cette page n’existe pas' : status === 403 ? 'Accès refusé' : 'Une erreur est survenue' %></h1>
+  <p><%= message %></p>
+  <p><a class="bouton" href="/">Retour à l’accueil</a></p>
+</section>
+<%- include('partials/foot') %>

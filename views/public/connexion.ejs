@@ -1,0 +1,13 @@
+<%- include('../partials/head') %>
+<section class="carte-formulaire">
+  <h1>Connexion</h1>
+  <% if (erreurs.general) { %><p class="flash flash--erreur" role="alert"><%= erreurs.general %></p><% } %>
+  <form method="post" action="/connexion" novalidate>
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <%- include('../partials/champ', { nom: 'email', libelle: 'Email', type: 'email', valeur: valeurs.email, erreur: erreurs.email, requis: true, attrs: 'autocomplete="email" autofocus' }) %>
+    <%- include('../partials/champ', { nom: 'motDePasse', libelle: 'Mot de passe', type: 'password', erreur: erreurs.motDePasse, requis: true, attrs: 'autocomplete="current-password"' }) %>
+    <button class="bouton bouton--plein" type="submit">Se connecter</button>
+  </form>
+  <p class="carte-formulaire__bas">Pas encore de compte ? <a href="/inscription">Créer un compte</a></p>
+</section>
+<%- include('../partials/foot') %>

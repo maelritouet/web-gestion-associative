@@ -1,0 +1,45 @@
+<%- include('../partials/head') %>
+<% const e = evenement; const d = new Date(e.date); const passe = d.getTime() < Date.now();
+   const libres = Math.max(0, e.capacite - e.nbInscrits); const taux = Math.min(100, Math.round(e.nbInscrits / e.capacite * 100));
+   const inscrit = monInscription && monInscription.statut === 'confirmee'; %>
+<p class="fil"><a href="/evenements">Événements</a> / <%= e.titre %></p>
+
+<article class="billet">
+  <div class="billet__principal">
+    <p class="categorie categorie--<%= e.categorie %>"><%= categories[e.categorie] %></p>
+    <h1 class="billet__titre"><%= e.titre %></h1>
+    <dl class="billet__infos">
+      <div><dt>Quand</dt><dd><time datetime="<%= d.toISOString() %>"><%= formaterDate(d) %></time></dd></div>
+      <div><dt>Où</dt><dd><%= e.lieu %></dd></div>
+      <div><dt>Organisé par</dt><dd><a href="/associations/<%= e.association._id %>"><%= e.association.nom %></a></dd></div>
+    </dl>
+    <div class="billet__description"><%= e.description %></div>
+  </div>
+
+  <aside class="billet__talon" aria-label="Réservation">
+    <p class="billet__places"><strong><%= libres %></strong> place<%= libres > 1 ? 's' : '' %> libre<%= libres > 1 ? 's' : '' %> sur <%= e.capacite %></p>
+    <div class="jauge jauge--grande"><div class="jauge__barre"><span style="--taux: <%= taux %>%"></span></div></div>
+
+    <% if (passe) { %>
+      <p class="billet__etat">Cet événement est terminé.</p>
+    <% } else if (!utilisateur) { %>
+      <p class="billet__etat">Connectez-vous pour réserver votre place.</p>
+      <a class="bouton bouton--plein" href="/connexion">Se connecter</a>
+    <% } else if (inscrit) { %>
+      <p class="billet__etat billet__etat--ok">Vous êtes inscrit(e) depuis le <%= formaterDate(monInscription.dateInscription, false) %>.</p>
+      <form method="post" action="/mes-inscriptions/<%= monInscription._id %>/annuler" data-confirmer="Annuler votre inscription à « <%= e.titre %> » ?">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <input type="hidden" name="retour" value="/evenements/<%= e._id %>">
+        <button class="bouton bouton--secondaire bouton--plein" type="submit">Annuler mon inscription</button>
+      </form>
+    <% } else if (libres === 0) { %>
+      <p class="billet__etat">Complet. Une place peut se libérer si quelqu’un annule.</p>
+    <% } else { %>
+      <form method="post" action="/evenements/<%= e._id %>/inscription">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <button class="bouton bouton--plein" type="submit">Réserver ma place</button>
+      </form>
+    <% } %>
+  </aside>
+</article>
+<%- include('../partials/foot') %>

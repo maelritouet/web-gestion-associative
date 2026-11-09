@@ -1,0 +1,59 @@
+<%- include('../partials/admin-head') %>
+<p class="fil"><a href="/admin/evenements">Événements</a> / <%= evenement ? 'Modifier' : 'Nouveau' %></p>
+<h1><%= titre %></h1>
+<% if (erreurs.general) { %><p class="flash flash--erreur" role="alert"><%= erreurs.general %></p><% } %>
+
+<form class="formulaire" method="post" action="<%= evenement ? '/admin/evenements/' + evenement._id : '/admin/evenements' %>" novalidate>
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+  <%- include('../partials/champ', { nom: 'titre', libelle: 'Titre', valeur: valeurs.titre, erreur: erreurs.titre, requis: true, attrs: 'maxlength="120"' }) %>
+  <%- include('../partials/champ', { nom: 'description', libelle: 'Description', type: 'textarea', valeur: valeurs.description, erreur: erreurs.description, requis: true }) %>
+
+  <div class="rangee">
+    <%- include('../partials/champ', { nom: 'date', libelle: 'Date et heure', type: 'datetime-local', valeur: valeurs.date, erreur: erreurs.date, requis: true }) %>
+    <%- include('../partials/champ', { nom: 'lieu', libelle: 'Lieu', valeur: valeurs.lieu, erreur: erreurs.lieu, requis: true }) %>
+  </div>
+
+  <div class="rangee">
+    <%- include('../partials/champ', { nom: 'capacite', libelle: 'Capacité (places)', type: 'number', valeur: valeurs.capacite, erreur: erreurs.capacite, requis: true, attrs: 'min="1" step="1"', aide: evenement ? evenement.nbInscrits + ' personne(s) déjà inscrite(s)' : '' }) %>
+    <div class="champ <%= erreurs.categorie ? 'champ--erreur' : '' %>">
+      <label for="champ-categorie">Catégorie <span class="requis" aria-hidden="true">*</span></label>
+      <select id="champ-categorie" name="categorie" required>
+        <option value="">Choisir…</option>
+        <% Object.entries(categories).forEach(function ([cle, libelle]) { %>
+          <option value="<%= cle %>" <%= valeurs.categorie === cle ? 'selected' : '' %>><%= libelle %></option>
+        <% }) %>
+      </select>
+      <% if (erreurs.categorie) { %><p class="champ__erreur"><%= erreurs.categorie %></p><% } %>
+    </div>
+  </div>
+
+  <div class="rangee">
+    <div class="champ <%= erreurs.association ? 'champ--erreur' : '' %>">
+      <label for="champ-association">Association organisatrice</label>
+      <% if (estAdmin) { %>
+        <select id="champ-association" name="association" required>
+          <option value="">Choisir…</option>
+          <% associations.forEach(function (a) { %>
+            <option value="<%= a._id %>" <%= String(valeurs.association) === String(a._id) ? 'selected' : '' %>><%= a.nom %><%= a.statut === 'inactive' ? ' (inactive)' : '' %></option>
+          <% }) %>
+        </select>
+      <% } else { %>
+        <input id="champ-association" type="text" value="<%= utilisateur.association ? utilisateur.association.nom : '' %>" disabled>
+      <% } %>
+      <% if (erreurs.association) { %><p class="champ__erreur"><%= erreurs.association %></p><% } %>
+    </div>
+    <div class="champ">
+      <label for="champ-statut">Visibilité</label>
+      <select id="champ-statut" name="statut">
+        <option value="brouillon" <%= valeurs.statut !== 'publie' ? 'selected' : '' %>>Brouillon (non visible)</option>
+        <option value="publie" <%= valeurs.statut === 'publie' ? 'selected' : '' %>>Publié</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="formulaire__actions">
+    <button class="bouton" type="submit"><%= evenement ? 'Enregistrer les modifications' : 'Créer l’événement' %></button>
+    <a href="/admin/evenements">Annuler</a>
+  </div>
+</form>
+<%- include('../partials/admin-foot') %>

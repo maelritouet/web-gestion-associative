@@ -1,0 +1,70 @@
+<%- include('../partials/admin-head') %>
+<div class="admin__entete">
+  <h1>Événements</h1>
+  <a class="bouton" href="/admin/evenements/nouveau">Créer un événement</a>
+</div>
+
+<form class="filtres filtres--compact" method="get" action="/admin/evenements" role="search">
+  <div class="champ filtres__recherche">
+    <label for="q">Rechercher</label>
+    <input id="q" name="q" type="search" value="<%= filtres.q || '' %>">
+  </div>
+  <div class="champ">
+    <label for="statut">Statut</label>
+    <select id="statut" name="statut">
+      <option value="">Tous</option>
+      <option value="publie" <%= filtres.statut === 'publie' ? 'selected' : '' %>>Publié</option>
+      <option value="brouillon" <%= filtres.statut === 'brouillon' ? 'selected' : '' %>>Brouillon</option>
+    </select>
+  </div>
+  <div class="champ">
+    <label for="quand">Période</label>
+    <select id="quand" name="quand">
+      <option value="tous" <%= filtres.quand === 'tous' ? 'selected' : '' %>>Toutes</option>
+      <option value="a-venir" <%= filtres.quand === 'a-venir' ? 'selected' : '' %>>À venir</option>
+      <option value="passes" <%= filtres.quand === 'passes' ? 'selected' : '' %>>Passés</option>
+    </select>
+  </div>
+  <% if (associations.length) { %>
+  <div class="champ">
+    <label for="association">Association</label>
+    <select id="association" name="association">
+      <option value="">Toutes</option>
+      <% associations.forEach(function (a) { %><option value="<%= a._id %>" <%= filtres.association === String(a._id) ? 'selected' : '' %>><%= a.nom %></option><% }) %>
+    </select>
+  </div>
+  <% } %>
+  <div class="filtres__actions"><button class="bouton bouton--secondaire" type="submit">Filtrer</button></div>
+</form>
+
+<% if (evenements.length) { %>
+<table class="tableau">
+  <thead><tr><th>Événement</th><th>Date</th><th>Statut</th><th>Inscrits</th><th>Actions</th></tr></thead>
+  <tbody>
+  <% evenements.forEach(function (e) { %>
+    <tr>
+      <td><strong><%= e.titre %></strong><br><small><%= categories[e.categorie] %>, <%= e.association ? e.association.nom : '' %></small></td>
+      <td><%= formaterDate(e.date) %></td>
+      <td><span class="pastille pastille--<%= e.statut %>"><%= e.statut === 'publie' ? 'Publié' : 'Brouillon' %></span></td>
+      <td class="tableau__nowrap"><a href="/admin/evenements/<%= e._id %>/inscrits"><%= e.nbInscrits %> / <%= e.capacite %></a></td>
+      <td class="tableau__actions">
+        <a href="/admin/evenements/<%= e._id %>/modifier">Modifier</a>
+        <form method="post" action="/admin/evenements/<%= e._id %>/statut">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <input type="hidden" name="statut" value="<%= e.statut === 'publie' ? 'brouillon' : 'publie' %>">
+          <button class="lien-bouton" type="submit"><%= e.statut === 'publie' ? 'Dépublier' : 'Publier' %></button>
+        </form>
+        <form method="post" action="/admin/evenements/<%= e._id %>/supprimer" data-confirmer="Supprimer « <%= e.titre %> » et ses <%= e.nbInscrits %> inscription(s) ? Cette action est définitive.">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <button class="lien-bouton lien-bouton--danger" type="submit">Supprimer</button>
+        </form>
+      </td>
+    </tr>
+  <% }) %>
+  </tbody>
+</table>
+<%- include('../partials/pagination') %>
+<% } else { %>
+  <p class="vide">Aucun événement ne correspond. <a href="/admin/evenements/nouveau">Créer un événement</a>.</p>
+<% } %>
+<%- include('../partials/admin-foot') %>
