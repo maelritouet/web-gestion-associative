@@ -9,6 +9,10 @@ Elle se compose de trois parties :
 - le back-office (`/admin`), où l'on gère associations, événements, inscrits et comptes selon son rôle ;
 - une API REST (`/api`) qui expose en JSON le CRUD des utilisateurs, associations, événements et inscriptions.
 
+## Équipe
+
+Mael, Thibault et Shahan.
+
 ## Démarrage rapide
 
 Prérequis : **Node.js 20+**.

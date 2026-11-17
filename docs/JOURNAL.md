@@ -30,6 +30,21 @@ Format : date, ce qui a été fait, problèmes rencontrés et décisions prises.
 - Les annulations conservent l'inscription (`statut: annulee`) pour l'historique ; une réinscription la réactive.
 - L'API partage la session du site ; la protection CSRF de l'API repose sur `SameSite=Lax` + l'obligation d'un corps JSON.
 
+## 2026-11-17 — Dépôt GitHub et base MongoDB locale
+
+**Réalisé**
+
+- Publication du dépôt sur GitHub (`maelritouet/web-gestion-associative`).
+- Relecture du README pour le rendre plus lisible ; ajout de l'équipe (Mael, Thibault, Shahan).
+- Installation de MongoDB et de Compass en local ; `.env` pointe sur `mongodb://127.0.0.1:27017/vie-associative`.
+- Vérification point par point de l'application par rapport au sujet.
+
+**Problèmes / décisions**
+
+- Les tests et `npm run demo` gardent une base en mémoire, pour ne jamais écraser la base locale.
+
+**Prochaine étape** : reporter la feuille de route en issues GitHub, répartir les tâches entre les trois membres et préparer la présentation.
+
 ## Modèle pour les prochaines entrées
 
 ```
