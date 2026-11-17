@@ -1,11 +1,13 @@
 # Vie associative ISEN
 
-Application web de la vie associative et des événements de l'école (projet fil-rouge 2026-2027,
-cours Développement Web — TypeScript / Node.js / Express / MongoDB / Mongoose).
+Application web pour la vie associative et les événements de l'école. C'est le projet fil rouge
+du cours de Développement Web (2026-2027), écrit en TypeScript avec Node.js, Express, MongoDB et Mongoose.
 
-- **Front public** : consulter les associations et les événements, rechercher et filtrer, réserver sa place, annuler, retrouver ses inscriptions.
-- **Back-office** (`/admin`) : gérer associations, événements, inscrits et comptes, avec des droits par rôle.
-- **API REST** (`/api`) : CRUD complet en JSON sur les utilisateurs, associations, événements et inscriptions.
+Elle se compose de trois parties :
+
+- le site public, où l'on parcourt les associations et les événements, on filtre, on réserve sa place, on l'annule et on retrouve ses inscriptions ;
+- le back-office (`/admin`), où l'on gère associations, événements, inscrits et comptes selon son rôle ;
+- une API REST (`/api`) qui expose en JSON le CRUD des utilisateurs, associations, événements et inscriptions.
 
 ## Démarrage rapide
 
@@ -13,10 +15,10 @@ Prérequis : **Node.js 20+**.
 
 ```bash
 npm install
-npm run demo        # base MongoDB temporaire en mémoire + données de démo, sans rien installer
+npm run demo        # MongoDB en mémoire + données de démo, rien d'autre à installer
 ```
 
-Puis ouvrir <http://localhost:3000>. Tous les comptes de démo ont le mot de passe `Motdepasse1` :
+Ouvrir ensuite <http://localhost:3000>. Les comptes de démo ont tous le mot de passe `Motdepasse1` :
 
 | Email | Rôle |
 |---|---|
@@ -32,7 +34,7 @@ Puis ouvrir <http://localhost:3000>. Tous les comptes de démo ont le mot de pas
 
 ```bash
 cp .env.example .env   # puis renseigner MONGODB_URI et SESSION_SECRET
-npm run seed           # (ré)initialise la base avec les données de démo — EFFACE les données existantes
+npm run seed           # remet la base à zéro avec les données de démo (efface tout ce qui existe)
 npm run dev            # serveur avec rechargement automatique
 ```
 
@@ -51,12 +53,12 @@ Production : `npm run build && npm start` (avec `NODE_ENV=production` et un `SES
 
 ## Architecture
 
-MVC complété par une couche **services** : les règles métier et les droits sont écrits une seule fois et
-utilisés à la fois par les contrôleurs de l'API (JSON) et par ceux des pages (EJS).
+Le code suit le modèle MVC, avec une couche de services en plus. Les règles métier et les droits sont
+écrits une seule fois dans les services, que les contrôleurs de l'API (JSON) et des pages (EJS) appellent tous les deux.
 
 ```
 src/
-├── app.ts                 Assemblage Express (sécurité, sessions, routeurs) — sans démarrer le serveur
+├── app.ts                 Assemblage Express (sécurité, sessions, routeurs), sans démarrer le serveur
 ├── server.ts              Connexion MongoDB + écoute HTTP
 ├── config/                Variables d'environnement, connexion à la base
 ├── models/                Schémas Mongoose : Utilisateur, Association, Evenement, Inscription
@@ -106,9 +108,9 @@ Chemin d'une requête : `route → middlewares (connexion, rôle, CSRF) → cont
 npm test
 ```
 
-61 tests répartis en 5 fichiers : droits (fonctions pures), validations des modèles, règles d'inscription
-(dont 25 inscriptions simultanées sur 5 places), API (CRUD et droits pour chaque rôle), pages HTML et
-back-office (CSRF, redirections, téléversement, export CSV).
+Les 61 tests sont répartis en 5 fichiers : les droits (fonctions pures), la validation des modèles, les règles
+d'inscription (avec un cas de 25 inscriptions simultanées pour 5 places), l'API (CRUD et droits pour chaque rôle),
+et les pages HTML du site et du back-office (CSRF, redirections, téléversement, export CSV).
 
 ## Documentation
 
